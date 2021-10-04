@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"jsx": "react",
+		"module": "commonjs",
+		"target": "es6",
+		"baseUrl": "./src",
+		"paths": {
+			"@Components/*": ["./components/*"],
+      		"@Utilities/*": ["./utilities/*"],
+      		"@API/*": ["./api/*"],
+            "@Assets/*": ["./assets/*"],
+      		"@/*": ["./*"],
+    	},
+		"esModuleInterop": true,
+		"plugins": [{ "name": "typescript-plugin-css-modules" }],
+	},
+	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.js", "./**/*.jsx"],
+	"exclude": ["node_modules", "build", "**/*.spec.ts", "**/*.d.ts"]
+}

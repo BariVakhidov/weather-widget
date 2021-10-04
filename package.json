@@ -1,0 +1,37 @@
+{
+  "name": "weather-widget",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack serve",
+    "lint": "eslint ./src/**/*.{ts,tsx} --ignore-path ./.eslintignore -c ./.eslintrc.js --quiet --fix",
+    "build": "cross-env NODE_ENV=production webpack --config ./webpack.config.js"
+  },
+  "author": "Bari",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.22.0",
+    "classnames": "^2.3.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "babel-loader": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.3.0",
+    "html-webpack-plugin": "^5.3.1",
+    "mini-css-extract-plugin": "^1.3.9",
+    "sass": "^1.32.8",
+    "sass-loader": "^11.0.1",
+    "style-loader": "^2.0.0",
+    "ts-loader": "^8.0.18",
+    "typescript": "^4.2.3",
+    "typescript-plugin-css-modules": "^3.2.0",
+    "webpack": "^5.56.1",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.3.0"
+  }
+}
