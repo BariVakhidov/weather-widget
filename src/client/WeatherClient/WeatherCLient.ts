@@ -1,8 +1,9 @@
 import { appid } from "@/constants/appid"
 import { instance } from "../ApiClient"
-import { WeatherByCityResponse } from "./weatherClient-types"
+import { GetWeatherByLocation, WeatherByCityResponse } from "./weatherClient-types"
 
 export const weatherClient = {
+
     getWeatherByCity(cityName: string) {
         return instance.get<WeatherByCityResponse>('', {
             params: {
@@ -11,5 +12,16 @@ export const weatherClient = {
                 appid
             }
         }).then(response => response.data)
-    }
+    },
+
+    getWeatherByCoordinates(params: GetWeatherByLocation) {
+        return instance.get<WeatherByCityResponse>('', {
+            params: {
+                ...params,
+                units: 'metric',
+                appid,
+            }
+        }).then(response => response.data)
+    },
+    
 }

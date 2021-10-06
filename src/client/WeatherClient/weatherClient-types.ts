@@ -52,3 +52,8 @@ export interface WeatherByCityResponse {
     name: string;
     cod: number;
 }
+
+export interface GetWeatherByLocation {
+    lat: number;
+    lon: number;
+}
