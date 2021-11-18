@@ -1,0 +1,31 @@
+.input_container {
+    position: relative;
+
+    .input {
+        height: 30px;
+    }
+
+    .cities {
+        width: 146px;
+        position: absolute;
+        top: 35px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        border: 1px solid #dedede;
+        padding: 7px;
+        border-radius: 5px;
+        background-color: white;
+        .city {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #efefef;
+            &:hover {
+                cursor: pointer;
+                background-color: #c5c5c5;
+            }
+        }
+    }
+}

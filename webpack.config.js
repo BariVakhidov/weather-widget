@@ -1,5 +1,6 @@
 const path = require('path')
 const { NODE_ENV, PRODUCTION } = require('./webpack/utils/constants')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const {
     getHtmlWebpackPlugin,
 } = require('./webpack/plugins/html-webpack-plugin')
@@ -30,6 +31,10 @@ module.exports = {
             {
                 test: /\.s[ac]ss$/i,
                 use: ['style-loader', getCssLoader(), 'sass-loader'],
+            },
+            {
+                test: /\.css$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
             },
             {
                 test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,

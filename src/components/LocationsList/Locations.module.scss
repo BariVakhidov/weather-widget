@@ -1,0 +1,39 @@
+.back {
+    padding: 5px;
+    transition: all 0.3s ease-out;
+    border-radius: 5px;
+
+    &:hover {
+        cursor: pointer;
+        box-shadow: 0 0 7px 2px #d9d9d9;
+    }
+}
+
+.locations {
+    padding-bottom: 20px;
+
+    .location {
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #e7e7e7;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 10px 0;
+
+        .delete {
+            padding: 5px;
+            transition: all 0.3s ease-out;
+            border-radius: 5px;
+
+            &:hover {
+                cursor: pointer;
+                background-color: #bbbbbb;
+            }
+        }
+    }
+
+    .selected {
+        background-color: #b7b7b7;
+    }
+}
