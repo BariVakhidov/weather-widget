@@ -1,6 +1,6 @@
 # Weather widget
 
-###Features:
+### Features:
 - ability to add this widget to any website as simple as inserting the snippet into an HTML-page:
 ```bash
 <weather-widget/>
@@ -10,7 +10,7 @@
 - get weather by city name
 - store selected locations in the localstorage
 
-###Stack:
+### Stack:
 - React (context, hooks)
 - Typescript
 - Webpack
