@@ -1,4 +1,4 @@
-import React, {FC, memo, useCallback, useEffect} from "react";
+import React, {FC, memo, useCallback} from "react";
 import {DragDropContext, Droppable, DropResult} from "react-beautiful-dnd";
 import {Space} from "antd";
 import {LeftOutlined} from "@ant-design/icons";
@@ -9,7 +9,6 @@ import {useWidgetStore} from "@/logic/store";
 import {WidgetActions} from "@/logic/widgetReducer";
 import {reorder} from "@/utils/reorder";
 import {nanoid} from "nanoid";
-import {localStorageService} from "@/services/localStorageService";
 import {batch} from "react-redux";
 
 export interface Location {
@@ -31,6 +30,10 @@ export const LocationsList: FC = memo(() => {
             dispatch({
                 type: WidgetActions.SET_CONFIG_MODE,
                 payload: false
+            })
+            dispatch({
+                type: WidgetActions.SET_CURRENT_LOCATION,
+                payload: null
             })
         })
     }, [])
@@ -54,10 +57,6 @@ export const LocationsList: FC = memo(() => {
         type: WidgetActions.DELETE_LOCATION,
         payload: id
     }), [dispatch])
-
-    useEffect(() => {
-        localStorageService.setItem("locations-list", JSON.stringify(locations))
-    }, [locations])
 
     return (
         <div>

@@ -1,4 +1,4 @@
-import React, {FC, memo, useCallback, useLayoutEffect} from "react"
+import React, {FC, memo, useCallback} from "react"
 import {LoadingOutlined} from "@ant-design/icons";
 import styles from "./Widget.module.scss"
 import settings from "@Assets/images/settings.png"
@@ -9,8 +9,8 @@ import {InfoItem} from "./InfoItem/InfoItem";
 import {getDewPoint} from "@/utils/getDewPoint";
 import {useWidgetStore} from "@/logic/store";
 import {WidgetActions} from "@/logic/widgetReducer";
-import {weatherClient} from "@/client/WeatherClient/WeatherCLient";
 import locationIcon from "@Assets/images/location.png";
+import {Error} from "@Components/common/error/Error";
 
 interface Props {
     handleTryToGetLocation: () => void;
@@ -18,34 +18,32 @@ interface Props {
 
 export const Weather: FC<Props> = memo(({handleTryToGetLocation}) => {
     const [state, dispatch] = useWidgetStore()
-    const {weatherData, isFetching, selectedLocation} = state
+    const {weatherData, isFetching, currentLocation, error} = state
+    const onLocationClick = () => {
+        if (!currentLocation) {
+            handleTryToGetLocation()
+        }
+    }
     const enableConfigMode = useCallback(() => dispatch({
         type: WidgetActions.SET_CONFIG_MODE,
         payload: true
     }), [dispatch])
-    const getWeatherByCity = async (name: string) => {
-        dispatch({type: WidgetActions.SET_FETCHING, payload: true})
-        try {
-            const response = await weatherClient.getWeatherByCity(name);
-            dispatch({type: WidgetActions.SET_WEATHER_DATA, payload: response})
-        } catch (error) {
-            dispatch({type: WidgetActions.SET_ERROR, payload: error})
-        } finally {
-            setTimeout(() => dispatch({type: WidgetActions.SET_FETCHING, payload: false}), 500)
-        }
-    }
-    useLayoutEffect(() => {
-        if (selectedLocation) {
-            getWeatherByCity(selectedLocation.name);
-        }
-    }, [selectedLocation])
+
 
     if (isFetching) {
         return <LoadingOutlined/>
     }
 
+    if (error) {
+        return <Error/>
+    }
+
     if (!weatherData) {
-        return null
+        return <div className={styles.text}>
+            Enable geolocation and press <img className={styles.location} onClick={handleTryToGetLocation}
+                                              src={locationIcon} alt=""/>
+            or add location manually <img onClick={enableConfigMode} className={styles.settings} src={settings} alt=""/>
+        </div>
     }
 
     const icon = weatherData.weather[0].icon
@@ -54,7 +52,7 @@ export const Weather: FC<Props> = memo(({handleTryToGetLocation}) => {
             <div className={styles.title}>
                 <span>{weatherData.name}, {weatherData.sys.country}</span>
                 <div className={styles.icons}>
-                    <img className={styles.location} onClick={handleTryToGetLocation} src={locationIcon} alt=""/>
+                    <img className={styles.location} onClick={onLocationClick} src={locationIcon} alt=""/>
                     <Icon onClick={enableConfigMode} style={styles.settings} source={settings}
                           height={15}/>
                 </div>

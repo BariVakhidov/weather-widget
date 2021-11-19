@@ -1,3 +1,14 @@
+.text {
+    .location {
+        margin: 0 5px;
+        display: inline-block;
+    }
+    .settings {
+        height: 13px;
+        display: inline-block;
+    }
+}
+
 .icon {
     padding: 5px;
     transition: all 0.3s ease-out;
@@ -7,6 +18,25 @@
 .icon:hover {
     cursor: pointer;
     box-shadow: 0 0 7px 2px #d9d9d9;
+}
+
+.location {
+    height: 13px;
+    display: block;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.settings {
+    margin-left: 0.5rem;
+    transition: transform .7s ease-in-out;
+
+    &:hover {
+        cursor: pointer;
+        transform: rotate(180deg);
+    }
 }
 
 .widget {
@@ -30,23 +60,7 @@
             align-items: center;
             justify-content: space-around;
 
-            .location {
-                height: 13px;
-                display: block;
-                &:hover {
-                    cursor: pointer;
-                }
-            }
 
-            .settings {
-                margin-left: 0.5rem;
-                transition: transform .7s ease-in-out;
-
-                &:hover {
-                    cursor: pointer;
-                    transform: rotate(180deg);
-                }
-            }
         }
     }
 

@@ -1,4 +1,4 @@
-import React, {FC, memo, useCallback, useEffect, useState} from "react"
+import React, {FC, memo, useCallback, useEffect, useLayoutEffect, useState} from "react"
 import styles from "./Widget.module.scss"
 import {Icon} from "@Components/common/icon/Icon"
 import close from "@Assets/images/cancel.png"
@@ -10,6 +10,7 @@ import {localStorageService} from "@/services/localStorageService";
 import {WidgetActions} from "@/logic/widgetReducer";
 import {useWidgetStore} from "@/logic/store";
 import {batch} from "react-redux";
+import {nanoid} from "nanoid";
 
 interface Props {
     closeWidget: () => void;
@@ -18,33 +19,38 @@ interface Props {
 export const Widget: FC<Props> = memo(({closeWidget}) => {
     const [isTryingToGetLocation, setTryingToGetLocation] = useState(false)
     const [state, dispatch] = useWidgetStore()
-    const {isConfigMode, currentLocation, locations} = state
+    const {isConfigMode, currentLocation, selectedLocation, locations} = state
 
     const handleTryToGetLocation = useCallback(() => setTryingToGetLocation(true), [])
-    const tryToGetLocation = (locations: Location[]) => {
-        dispatch({type: WidgetActions.SET_CURRENT_LOCATION, payload: null})
+    const tryToGetLocation = () => {
         navigator.geolocation.getCurrentPosition(position => {
-            batch(() => {
-                dispatch({type: WidgetActions.SET_SELECTED_LOCATION, payload: null})
-                dispatch({
-                    type: WidgetActions.SET_CURRENT_LOCATION, payload: {
-                        lon: position.coords.longitude,
-                        lat: position.coords.latitude
-                    }
-                })
-            })
+            const {longitude, latitude} = position.coords
+            dispatch({type: WidgetActions.SET_CURRENT_LOCATION, payload: {lon: longitude, lat: latitude}})
         }, error => {
             console.log(error)
-            if (locations.length) {
-                dispatch({type: WidgetActions.SET_SELECTED_LOCATION, payload: locations[0]})
-            }
         })
-        setTryingToGetLocation(false)
     }
     const getWeatherByLocation = async (params: GetWeatherByLocation) => {
         dispatch({type: WidgetActions.SET_FETCHING, payload: true})
         try {
             const response = await weatherClient.getWeatherByCoordinates(params)
+            const location: Location = {name: response.name, id: nanoid(12)}
+            batch(() => {
+                dispatch({type: WidgetActions.SET_SELECTED_LOCATION, payload: location})
+                dispatch({type: WidgetActions.SET_WEATHER_DATA, payload: response})
+                dispatch({type: WidgetActions.SET_LOCATION, payload: location})
+            })
+        } catch (error) {
+            dispatch({type: WidgetActions.SET_ERROR, payload: error})
+        } finally {
+            setTryingToGetLocation(false)
+            setTimeout(() => dispatch({type: WidgetActions.SET_FETCHING, payload: false}), 500)
+        }
+    }
+    const getWeatherByCity = async (name: string) => {
+        dispatch({type: WidgetActions.SET_FETCHING, payload: true})
+        try {
+            const response = await weatherClient.getWeatherByCity(name);
             dispatch({type: WidgetActions.SET_WEATHER_DATA, payload: response})
         } catch (error) {
             dispatch({type: WidgetActions.SET_ERROR, payload: error})
@@ -53,30 +59,38 @@ export const Widget: FC<Props> = memo(({closeWidget}) => {
         }
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (localStorage.length) {
             const locationsList: Location[] | null = JSON.parse(localStorageService.getItem("locations-list"))
             if (locationsList.length) {
                 dispatch({type: WidgetActions.SET_LOCATIONS, payload: locationsList})
+                dispatch({type: WidgetActions.SET_SELECTED_LOCATION, payload: locationsList[0]})
+            } else {
+                tryToGetLocation()
             }
         }
-        setTryingToGetLocation(true)
         return () => {
             dispatch({type: WidgetActions.CLEANUP})
         }
     }, [])
 
     useEffect(() => {
-        if (currentLocation) {
+        if (currentLocation && isTryingToGetLocation) {
             getWeatherByLocation(currentLocation)
+        } else if (isTryingToGetLocation) {
+            tryToGetLocation()
         }
-    }, [currentLocation])
+    }, [isTryingToGetLocation, currentLocation])
+
+    useLayoutEffect(() => {
+        if (selectedLocation && !currentLocation) {
+            getWeatherByCity(selectedLocation.name);
+        }
+    }, [selectedLocation, currentLocation])
 
     useEffect(() => {
-        if (isTryingToGetLocation) {
-            tryToGetLocation(locations)
-        }
-    }, [isTryingToGetLocation,locations])
+        localStorageService.setItem("locations-list", JSON.stringify(locations))
+    }, [locations])
 
     return (
         <>

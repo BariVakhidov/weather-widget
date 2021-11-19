@@ -87,7 +87,9 @@ export const widgetReducer: Reducer<WidgetState, WidgetActionCreatorsType> = (st
         case WidgetActions.SET_LOCATION:
             return {
                 ...state,
-                locations: [...state.locations, action.payload],
+                locations: !state.locations.find(location => location.name === action.payload.name)
+                    ? [action.payload, ...state.locations]
+                    : state.locations,
             }
         case WidgetActions.SET_CURRENT_LOCATION:
             return {
